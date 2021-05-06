@@ -52,21 +52,19 @@ const ColumnSortable = styled.div`
   }
 `;
 
-const TableCol = memo(({ column, sortIcon }) => {
-  const {
-    dispatch,
-    pagination,
-    paginationServer,
-    sortColumn,
-    sortDirection,
-    sortServer,
-    selectableRowsVisibleOnly,
-    persistSelectedOnSort,
-  } = useTableContext();
+const TableColFilter = memo(({ column, sortIcon }) => {
+  // const {
+  //   dispatch,
+  //   pagination,
+  //   paginationServer,
+  //   sortColumn,
+  //   sortDirection,
+  //   sortServer,
+  //   selectableRowsVisibleOnly,
+  //   persistSelectedOnSort,
+  // } = useTableContext();
 
-  if (column.omit) {
-    return null;
-  }
+
 
   const handleSortChange = () => {
     if (column.sortable) {
@@ -90,26 +88,6 @@ const TableCol = memo(({ column, sortIcon }) => {
       });
     }
   };
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSortChange();
-    }
-  };
-
-  const renderNativeSortIcon = (sortActive) => (
-    <NativeSortIcon
-      column={column}
-      sortActive={sortActive}
-      sortDirection={sortDirection}
-    />
-  );
-
-  const renderCustomSortIcon = () => (
-    <span className={[sortDirection, "__rdt_custom_sort_icon__"].join(" ")}>
-      {sortIcon}
-    </span>
-  );
 
   const sortActive = column.sortable && sortColumn === column.selector;
   const nativeSortIconLeft = column.sortable && !sortIcon && !column.right;
@@ -148,9 +126,9 @@ const TableCol = memo(({ column, sortIcon }) => {
   );
 });
 
-TableCol.propTypes = {
+TableColFilter.propTypes = {
   column: PropTypes.object.isRequired,
   sortIcon: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
 };
 
-export default TableCol;
+export default TableColFilter;
