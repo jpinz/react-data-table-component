@@ -91,6 +91,25 @@ export function tableReducer(state, action) {
       };
     }
 
+    case 'FILTER_CHANGE': {
+      const { filterColumn, filterValue, filterServer, selectedColumn, pagination, paginationServer, visibleOnly, persistSelectedOnFilter } = action;
+      const clearSelectedOnFilter = (pagination && paginationServer && !persistSelectedOnFilter) || filterServer || visibleOnly;
+      console.log(`Filtering for value: ${filterValue} on column: ${filterColumn}`);
+      return {
+        ...state,
+        filterColumn,
+        selectedColumn,
+        filterValue,
+        currentPage: 1,
+        // when using server-side paging reset selected row counts when filtering
+        ...clearSelectedOnFilter && ({
+          allSelected: false,
+          selectedCount: 0,
+          selectedRows: [],
+        }),
+      };
+    }
+
     case 'CHANGE_PAGE': {
       const { page, paginationServer, visibleOnly, persistSelectedOnPageChange } = action;
       const mergeSelections = paginationServer && persistSelectedOnPageChange;

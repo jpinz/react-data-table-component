@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Cell } from "./Cell";
 import { useTableContext } from "./DataTableContext";
 import NativeSortIcon from "../icons/NativeSortIcon";
+import TableColSubheader from "./TableColSubheader";
 
 const TableColStyle = styled(Cell)`
   ${(props) => props.column.button && "text-align: center"};
@@ -62,6 +63,10 @@ const TableCol = memo(({ column, sortIcon }) => {
     sortServer,
     selectableRowsVisibleOnly,
     persistSelectedOnSort,
+    filterColumn,
+    filterValue,
+    filterServer,
+    persistSelectedOnFilter,
   } = useTableContext();
 
   if (column.omit) {
@@ -91,9 +96,28 @@ const TableCol = memo(({ column, sortIcon }) => {
     }
   };
 
+  const handleFilterChange = (e) => {
+    // console.log("FILTERING CHANGE: " + e.target.value);
+
+    if (column.filterable) {
+      dispatch({
+        type: "FILTER_CHANGE",
+        filterValue: e.target.value,
+        filterColumn: column.selector,
+        filterServer,
+        selectedColumn: column,
+        pagination,
+        paginationServer,
+        visibleOnly: selectableRowsVisibleOnly,
+        persistSelectedOnFilter,
+      });
+    }
+  };
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSortChange();
+      handleFilterChange();
     }
   };
 
@@ -142,7 +166,10 @@ const TableCol = memo(({ column, sortIcon }) => {
             {nativeSortIconLeft && renderNativeSortIcon(sortActive)}
           </ColumnSortable>
         )}
-        <div>filter</div>
+        {/* <TableColSubheader id={column.id} column={column}/> */}
+        {column.filterable && (
+          <input type="search" onChange={handleFilterChange}></input>
+        )}
       </div>
     </TableColStyle>
   );

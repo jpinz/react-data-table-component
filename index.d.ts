@@ -14,6 +14,7 @@ export interface IDataTableColumn<T = any> {
   sortFunction?: (a: T, b: T) => number;
   format?: (row: T, rowIndex: number) => React.ReactNode;
   cell?: (row: T, rowIndex: number, column: IDataTableColumn, id: string | number) => React.ReactNode;
+  subHeader?: (column: IDataTableColumn, id: string | number) => React.ReactNode;
   grow?: number;
   width?: string;
   minWidth?: string;

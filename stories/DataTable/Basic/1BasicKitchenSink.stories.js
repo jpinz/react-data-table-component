@@ -18,6 +18,7 @@ const columns = [
     name: 'Title',
     selector: 'title',
     sortable: true,
+    filterable: true,
   },
   {
     name: 'Director',
@@ -53,6 +54,8 @@ const KitchenSink = () => {
   const [fixedHeader, setFixedheader] = React.useState(false);
   const [direction, setDirection] = React.useState(false);
   const [directionValue, setDirectionValue] = React.useState('auto');
+
+  const filteredItems = data.filter(item => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()));
 
   return (
     <div>
@@ -209,6 +212,7 @@ const KitchenSink = () => {
           </>
         )}
       </FormGroup>
+
 
       <DataTable
         title="Movie List"
