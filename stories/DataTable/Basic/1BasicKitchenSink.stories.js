@@ -1,42 +1,66 @@
-import React from 'react';
-import { storiesOf } from '@storybook/react';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Checkbox from '@material-ui/core/Checkbox';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Icon1 from '@material-ui/icons/ReplyAll';
-import Icon2 from '@material-ui/icons/Markunread';
-import Icon3 from '@material-ui/icons/CloudDownload';
-import TextField from '@material-ui/core/TextField';
-import data from '../constants/sampleMovieData';
-import DataTable from '../../../src/index';
+import React from "react";
+import { storiesOf } from "@storybook/react";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import Checkbox from "@material-ui/core/Checkbox";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Icon1 from "@material-ui/icons/ReplyAll";
+import Icon2 from "@material-ui/icons/Markunread";
+import Icon3 from "@material-ui/icons/CloudDownload";
+import TextField from "@material-ui/core/TextField";
+import data from "../constants/sampleMovieData";
+import DataTable from "../../../src/index";
 
 const columns = [
   {
-    name: 'Title',
-    selector: 'title',
+    name: "Title",
+    selector: "title",
     sortable: true,
-    filterable: true,
+    filter: (col, filterChange) => (
+      <div>
+        <input
+          type="search"
+          onChange={filterChange}
+          placeholder={col.name}
+        ></input>
+      </div>
+    ),
   },
   {
-    name: 'Director',
-    selector: 'director',
+    name: "Director",
+    selector: "director",
     sortable: true,
   },
   {
-    name: 'Year',
-    selector: 'year',
+    name: "Year",
+    selector: "year",
     sortable: true,
+    filter: (col, filterChange) => {
+      var val = function (X) {
+        return <option>{X}</option>;
+      };
+      return (
+        <select onChange={filterChange}>
+          <option value="">None</option>
+          {col.values.map(val)}
+        </select>
+      );
+    },
   },
 ];
 
 const KitchenSink = () => {
   const [selectableRows, setSelectableRows] = React.useState(false);
   const [noSelectAll, setNoSelectAll] = React.useState(false);
-  const [selectableRowsVisibleOnly, setSelectableRowsVisibleOnly] = React.useState(false);
-  const [selectableRowsHighlight, setSelectableRowsHighlight] = React.useState(false);
+  const [
+    selectableRowsVisibleOnly,
+    setSelectableRowsVisibleOnly,
+  ] = React.useState(false);
+  const [selectableRowsHighlight, setSelectableRowsHighlight] = React.useState(
+    false
+  );
   const [expandableRows, setExpandableRows] = React.useState(false);
   const [expandOnRowClick, setExpandOnRowClick] = React.useState(false);
   const [pagination, setPagination] = React.useState(true);
@@ -50,48 +74,92 @@ const KitchenSink = () => {
   const [loading, setLoading] = React.useState(false);
   const [noHeader, setNoHeader] = React.useState(false);
   const [subHeader, setSubHeader] = React.useState(false);
-  const [subHeaderAlign, setSubHeaderAlign] = React.useState('right');
+  const [subHeaderAlign, setSubHeaderAlign] = React.useState("right");
   const [fixedHeader, setFixedheader] = React.useState(false);
   const [direction, setDirection] = React.useState(false);
-  const [directionValue, setDirectionValue] = React.useState('auto');
-
-  const filteredItems = data.filter(item => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()));
+  const [directionValue, setDirectionValue] = React.useState("auto");
 
   return (
     <div>
       <FormControlLabel
-        control={<Checkbox size="small" checked={loading} onChange={() => setLoading(!loading)} />}
+        control={
+          <Checkbox
+            size="small"
+            checked={loading}
+            onChange={() => setLoading(!loading)}
+          />
+        }
         label="Simulate Loading State"
       />
       <FormGroup row component="fieldset">
         <FormControlLabel
-          control={<Checkbox size="small" checked={selectableRows} onChange={() => setSelectableRows(!selectableRows)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={selectableRows}
+              onChange={() => setSelectableRows(!selectableRows)}
+            />
+          }
           label="Selectable Rows"
         />
         {selectableRows && (
           <>
             <FormControlLabel
-              control={<Checkbox size="small" checked={noSelectAll} onChange={() => setNoSelectAll(!noSelectAll)} />}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={noSelectAll}
+                  onChange={() => setNoSelectAll(!noSelectAll)}
+                />
+              }
               label="Disable Select All Rows"
             />
 
             <FormControlLabel
-              control={<Checkbox size="small" checked={selectableRowsVisibleOnly} onChange={() => setSelectableRowsVisibleOnly(!selectableRowsVisibleOnly)} />}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={selectableRowsVisibleOnly}
+                  onChange={() =>
+                    setSelectableRowsVisibleOnly(!selectableRowsVisibleOnly)
+                  }
+                />
+              }
               label="Allow Visible Rows Only"
             />
 
             <FormControlLabel
-              control={<Checkbox size="small" checked={selectableRowsHighlight} onChange={() => setSelectableRowsHighlight(!selectableRowsHighlight)} />}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={selectableRowsHighlight}
+                  onChange={() =>
+                    setSelectableRowsHighlight(!selectableRowsHighlight)
+                  }
+                />
+              }
               label="Highlight Selected Rows"
             />
 
             <FormControlLabel
-              control={<Checkbox size="small" checked={tableHead} onChange={() => setNoHead(!tableHead)} />}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={tableHead}
+                  onChange={() => setNoHead(!tableHead)}
+                />
+              }
               label="No Table Head"
             />
 
             <FormControlLabel
-              control={<Checkbox size="small" checked={noContextMenu} onChange={() => setNoContextMenu(!noContextMenu)} />}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={noContextMenu}
+                  onChange={() => setNoContextMenu(!noContextMenu)}
+                />
+              }
               label="No Context Menu"
             />
           </>
@@ -100,12 +168,24 @@ const KitchenSink = () => {
 
       <FormGroup row>
         <FormControlLabel
-          control={<Checkbox size="small" checked={expandableRows} onChange={() => setExpandableRows(!expandableRows)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={expandableRows}
+              onChange={() => setExpandableRows(!expandableRows)}
+            />
+          }
           label="Expandable Rows"
         />
         {expandableRows && (
           <FormControlLabel
-            control={<Checkbox size="small" checked={expandOnRowClick} onChange={() => setExpandOnRowClick(!expandOnRowClick)} />}
+            control={
+              <Checkbox
+                size="small"
+                checked={expandOnRowClick}
+                onChange={() => setExpandOnRowClick(!expandOnRowClick)}
+              />
+            }
             label="Expand on Row Click"
           />
         )}
@@ -113,55 +193,121 @@ const KitchenSink = () => {
 
       <FormGroup row>
         <FormControlLabel
-          control={<Checkbox size="small" checked={pagination} onChange={() => setPagination(!pagination)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={pagination}
+              onChange={() => setPagination(!pagination)}
+            />
+          }
           label="Pagination"
         />
       </FormGroup>
 
       <FormGroup row>
         <FormControlLabel
-          control={<Checkbox size="small" checked={highlight} onChange={() => setHighlight(!highlight)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={highlight}
+              onChange={() => setHighlight(!highlight)}
+            />
+          }
           label="Highlight on Hover"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={striped} onChange={() => setStriped(!striped)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={striped}
+              onChange={() => setStriped(!striped)}
+            />
+          }
           label="Striped Rows"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={pointer} onChange={() => setPointer(!pointer)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={pointer}
+              onChange={() => setPointer(!pointer)}
+            />
+          }
           label="Pointer on Hover"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={dense} onChange={() => setDense(!dense)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={dense}
+              onChange={() => setDense(!dense)}
+            />
+          }
           label="Dense"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={persist} onChange={() => setPersist(!persist)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={persist}
+              onChange={() => setPersist(!persist)}
+            />
+          }
           label="Persist Table Head"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={tableHead} onChange={() => setNoHead(!tableHead)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={tableHead}
+              onChange={() => setNoHead(!tableHead)}
+            />
+          }
           label="No Table Head"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={noHeader} onChange={() => setNoHeader(!noHeader)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={noHeader}
+              onChange={() => setNoHeader(!noHeader)}
+            />
+          }
           label="No Header"
         />
         <FormControlLabel
-          control={<Checkbox size="small" checked={fixedHeader} onChange={() => setFixedheader(!fixedHeader)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={fixedHeader}
+              onChange={() => setFixedheader(!fixedHeader)}
+            />
+          }
           label="Fixed Header"
         />
       </FormGroup>
 
       <FormGroup row>
         <FormControlLabel
-          control={<Checkbox size="small" checked={subHeader} onChange={() => setSubHeader(!subHeader)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={subHeader}
+              onChange={() => setSubHeader(!subHeader)}
+            />
+          }
           label="Show Custom SubHeader"
         />
         {subHeader && (
           <>
             <FormControl component="fieldset">
-              <RadioGroup aria-label="position" name="position" value={subHeaderAlign} onChange={e => setSubHeaderAlign(e.target.value)} row>
+              <RadioGroup
+                aria-label="position"
+                name="position"
+                value={subHeaderAlign}
+                onChange={(e) => setSubHeaderAlign(e.target.value)}
+                row
+              >
                 <FormControlLabel
                   value="left"
                   control={<Radio color="primary" />}
@@ -185,13 +331,25 @@ const KitchenSink = () => {
 
       <FormGroup row>
         <FormControlLabel
-          control={<Checkbox size="small" checked={direction} onChange={() => setDirection(!direction)} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={direction}
+              onChange={() => setDirection(!direction)}
+            />
+          }
           label="Set Direction"
         />
         {direction && (
           <>
             <FormControl component="fieldset">
-              <RadioGroup aria-label="position" name="position" value={directionValue} onChange={e => setDirectionValue(e.target.value)} row>
+              <RadioGroup
+                aria-label="position"
+                name="position"
+                value={directionValue}
+                onChange={(e) => setDirectionValue(e.target.value)}
+                row
+              >
                 <FormControlLabel
                   value="auto"
                   control={<Radio color="primary" />}
@@ -212,7 +370,6 @@ const KitchenSink = () => {
           </>
         )}
       </FormGroup>
-
 
       <DataTable
         title="Movie List"
@@ -236,14 +393,18 @@ const KitchenSink = () => {
         noHeader={noHeader}
         subHeader={subHeader}
         subHeaderComponent={
-          (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <TextField id="outlined-basic" label="Search" variant="outlined" size="small" style={{ margin: '5px' }} />
-              <Icon1 style={{ margin: '5px' }} color="action" />
-              <Icon2 style={{ margin: '5px' }} color="action" />
-              <Icon3 style={{ margin: '5px' }} color="action" />
-            </div>
-          )
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <TextField
+              id="outlined-basic"
+              label="Search"
+              variant="outlined"
+              size="small"
+              style={{ margin: "5px" }}
+            />
+            <Icon1 style={{ margin: "5px" }} color="action" />
+            <Icon2 style={{ margin: "5px" }} color="action" />
+            <Icon3 style={{ margin: "5px" }} color="action" />
+          </div>
         }
         subHeaderAlign={subHeaderAlign}
         fixedHeader={fixedHeader}
@@ -254,5 +415,4 @@ const KitchenSink = () => {
   );
 };
 
-storiesOf('General', module)
-  .add('Kitchen Sink', KitchenSink);
+storiesOf("General", module).add("Kitchen Sink", KitchenSink);

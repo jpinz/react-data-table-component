@@ -97,12 +97,17 @@ const TableCol = memo(({ column, sortIcon }) => {
   };
 
   const handleFilterChange = (e) => {
-    // console.log("FILTERING CHANGE: " + e.target.value);
+    if (column.filter) {
+      let value = filterValue;
+      // change filtering value only if filterColumn (currently selected column) is === the newly clicked column
+      // otherwise, retain filter direction if the column is switched
+      if (filterColumn === column.selector) {
+        value = e.target.value;
+      }
 
-    if (column.filterable) {
       dispatch({
         type: "FILTER_CHANGE",
-        filterValue: e.target.value,
+        filterValue: value,
         filterColumn: column.selector,
         filterServer,
         selectedColumn: column,
@@ -166,10 +171,7 @@ const TableCol = memo(({ column, sortIcon }) => {
             {nativeSortIconLeft && renderNativeSortIcon(sortActive)}
           </ColumnSortable>
         )}
-        {/* <TableColSubheader id={column.id} column={column}/> */}
-        {column.filterable && (
-          <input type="search" onChange={handleFilterChange}></input>
-        )}
+        {column.filter && column.filter(column, handleFilterChange)}
       </div>
     </TableColStyle>
   );

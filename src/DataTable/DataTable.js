@@ -20,7 +20,7 @@ import NoData from './NoDataWrapper';
 import NativePagination from './Pagination';
 import useDidUpdateEffect from '../hooks/useDidUpdateEffect';
 import { propTypes, defaultProps } from './propTypes';
-import { isEmpty, sort, decorateColumns, getSortDirection, getNumberOfPages, recalculatePage, isRowSelected } from './util';
+import { isEmpty, sort, filterRows, decorateColumns, getSortDirection, getNumberOfPages, recalculatePage, isRowSelected, unique } from './util';
 import { createStyles } from './styles';
 
 const DataTable = memo(({
@@ -89,6 +89,9 @@ const DataTable = memo(({
   onSort,
   sortFunction,
   sortServer,
+  onFilter,
+  filterFunction,
+  filterServer,
   expandableRowsComponent,
   expandableRowDisabled,
   expandableRowsHideExpander,
@@ -109,8 +112,10 @@ const DataTable = memo(({
     selectedCount: 0,
     selectedRows: [],
     sortColumn: defaultSortField,
+    filterColumn: defaultSortField,
     selectedColumn: {},
     sortDirection: getSortDirection(defaultSortAsc),
+    filterValue: "",
     currentPage: paginationDefaultPage,
     rowsPerPage: paginationPerPage,
   };
@@ -122,8 +127,10 @@ const DataTable = memo(({
     allSelected,
     selectedCount,
     sortColumn,
+    filterColumn,
     selectedColumn,
     sortDirection,
+    filterValue,
   }, dispatch] = useReducer(tableReducer, initialState);
   const { persistSelectedOnSort, persistSelectedOnPageChange } = paginationServerOptions;
   const mergeSelections = paginationServer && (persistSelectedOnPageChange || persistSelectedOnSort);
@@ -158,6 +165,10 @@ const DataTable = memo(({
   useDidUpdateEffect(() => {
     onSort(selectedColumn, sortDirection);
   }, [sortColumn, sortDirection]);
+
+  useDidUpdateEffect(() => {
+    onFilter(selectedColumn, filterValue);
+  }, [filterColumn, filterValue]);
 
   useEffect(() => {
     dispatch({ type: 'CLEAR_SELECTED_ROWS', selectedRowsFlag: clearSelectedRows });
@@ -211,17 +222,36 @@ const DataTable = memo(({
     return [...data].sort(customSortFunction);
   }, [sortServer, sortColumn, columnsBySelector, sortDirection, data, sortFunction]);
 
+  const filteredData = useMemo(() => {
+    // server-side filtering bypasses internal filtering
+    if (filterServer) {
+      return sortedData;
+    }
+
+    if (!filterValue) {
+      return sortedData;
+    }
+
+    // use general sorting function when columns has no sort function on it's own
+    const column = filterColumn && columnsBySelector[filterColumn];
+    if (!column || !column.filterFunction) {
+      return filterRows(sortedData, filterColumn, filterValue, filterFunction);
+    }
+
+    // use column's custom filtering function
+    return [...sortedData].filterRows(column.filterFunction);
+  }, [filterServer, filterColumn, columnsBySelector, filterValue, sortedData, filterFunction]);
+
   const calculatedRows = useMemo(() => {
     if (pagination && !paginationServer) {
       // when using client-side pagination we can just slice the data set
       const lastIndex = currentPage * rowsPerPage;
       const firstIndex = lastIndex - rowsPerPage;
-
-      return sortedData.slice(firstIndex, lastIndex);
+      return filteredData.slice(firstIndex, lastIndex);
     }
 
-    return sortedData;
-  }, [currentPage, pagination, paginationServer, rowsPerPage, sortedData]);
+    return filteredData;
+  }, [currentPage, pagination, paginationServer, rowsPerPage, filteredData]);
 
   // recalculate the pagination and currentPage if the data length changes
   if (pagination && !paginationServer && data.length > 0 && calculatedRows.length === 0) {
@@ -253,6 +283,8 @@ const DataTable = memo(({
     selectedCount,
     sortColumn,
     sortDirection,
+    filterColumn,
+    filterValue,
     keyField,
     contextMessage,
     contextActions,
@@ -292,6 +324,12 @@ const DataTable = memo(({
   };
 
   const showSelectAll = persistSelectedOnPageChange || selectableRowsNoSelectAll;
+
+  columnsMemo.map(column => {
+    if (column.filter) {
+      column["values"] = unique(data, column.selector);
+    }
+  });
 
   return (
     <ThemeProvider theme={currentTheme}>
@@ -356,7 +394,7 @@ const DataTable = memo(({
                 </TableHead>
               )}
 
-              {!data.length > 0 && !progressPending && (
+              {!data.length > 0 && !progressPending && !calculatedRows.length > 0 && (
                 <NoData>
                   {noDataComponent}
                 </NoData>
@@ -368,7 +406,7 @@ const DataTable = memo(({
                 </ProgressWrapper>
               )}
 
-              {!progressPending && data.length > 0 && (
+              {!progressPending && data.length > 0 && calculatedRows.length > 0 && (
                 <TableBody
                   fixedHeader={fixedHeader}
                   fixedHeaderScrollHeight={fixedHeaderScrollHeight}
