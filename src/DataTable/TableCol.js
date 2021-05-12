@@ -101,9 +101,9 @@ const TableCol = memo(({ column, sortIcon }) => {
       let value = filterValue;
       // change filtering value only if filterColumn (currently selected column) is === the newly clicked column
       // otherwise, retain filter direction if the column is switched
-      if (filterColumn === column.selector) {
+      // if (filterColumn === column.selector) {
         value = e.target.value;
-      }
+      // }
 
       dispatch({
         type: "FILTER_CHANGE",
@@ -122,7 +122,6 @@ const TableCol = memo(({ column, sortIcon }) => {
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSortChange();
-      handleFilterChange();
     }
   };
 

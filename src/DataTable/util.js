@@ -2,7 +2,6 @@ import shortid from "shortid";
 import orderBy from "lodash.orderby";
 import filter from "lodash.filter";
 import groupBy from "lodash.groupby";
-import map from "lodash.map";
 
 export const isEmpty = (field = "") => {
   return typeof field === "undefined" || field === null || field.length === 0;

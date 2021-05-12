@@ -8152,11 +8152,6 @@ lodash.groupby@^4.6.0:
   resolved "https://registry.yarnpkg.com/lodash.groupby/-/lodash.groupby-4.6.0.tgz#0b08a1dcf68397c397855c3239783832df7403d1"
   integrity sha1-Cwih3PaDl8OXhVwyOXg4Mt90A9E=
 
-lodash.map@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.map/-/lodash.map-4.6.0.tgz#771ec7839e3473d9c4cde28b19394c3562f4f6d3"
-  integrity sha1-dx7Hg540c9nEzeKLGTlMNWL09tM=
-
 lodash.orderby@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.orderby/-/lodash.orderby-4.6.0.tgz#e697f04ce5d78522f54d9338b32b81a3393e4eb3"
