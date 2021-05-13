@@ -5,51 +5,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Checkbox from "@material-ui/core/Checkbox";
 import Radio from "@material-ui/core/Radio";
+import Select from "@material-ui/core/Select";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import MenuItem from '@material-ui/core/MenuItem';
 import Icon1 from "@material-ui/icons/ReplyAll";
 import Icon2 from "@material-ui/icons/Markunread";
 import Icon3 from "@material-ui/icons/CloudDownload";
 import TextField from "@material-ui/core/TextField";
 import data from "../constants/sampleMovieData";
 import DataTable from "../../../src/index";
-
-const columns = [
-  {
-    name: "Title",
-    selector: "title",
-    sortable: true,
-    filter: (col, filterChange) => (
-      <div>
-        <input
-          type="search"
-          onChange={filterChange}
-          placeholder={col.name}
-        ></input>
-      </div>
-    ),
-  },
-  {
-    name: "Director",
-    selector: "director",
-    sortable: true,
-  },
-  {
-    name: "Year",
-    selector: "year",
-    sortable: true,
-    filter: (col, filterChange) => {
-      var val = function (X) {
-        return <option>{X}</option>;
-      };
-      return (
-        <select onChange={filterChange}>
-          <option value="">None</option>
-          {col.values.map(val)}
-        </select>
-      );
-    },
-  },
-];
 
 const KitchenSink = () => {
   const [selectableRows, setSelectableRows] = React.useState(false);
@@ -62,6 +26,9 @@ const KitchenSink = () => {
     false
   );
   const [expandableRows, setExpandableRows] = React.useState(false);
+  const [filterableColumns, setFilterColumns] = React.useState(false);
+  const [titleFilter, setTitleFilter] = React.useState(false);
+  const [dateFilter, setDateFilter] = React.useState("none");
   const [expandOnRowClick, setExpandOnRowClick] = React.useState(false);
   const [pagination, setPagination] = React.useState(true);
   const [highlight, setHighlight] = React.useState(false);
@@ -78,6 +45,26 @@ const KitchenSink = () => {
   const [fixedHeader, setFixedheader] = React.useState(false);
   const [direction, setDirection] = React.useState(false);
   const [directionValue, setDirectionValue] = React.useState("auto");
+
+  var columns = [
+    {
+      name: "Title",
+      selector: "title",
+      sortable: true,
+      filter: titleFilter,
+    },
+    {
+      name: "Director",
+      selector: "director",
+      sortable: true,
+    },
+    {
+      name: "Year",
+      selector: "year",
+      sortable: true,
+      filter: dateFilter,
+    },
+  ];
 
   return (
     <div>
@@ -325,6 +312,48 @@ const KitchenSink = () => {
                 />
               </RadioGroup>
             </FormControl>
+          </>
+        )}
+      </FormGroup>
+
+      <FormGroup row>
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={filterableColumns}
+              onChange={() => setFilterColumns(!filterableColumns)}
+            />
+          }
+          label="Filter on Columns"
+        />
+        {filterableColumns && (
+          <>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={titleFilter}
+                  onChange={() => setTitleFilter(!titleFilter)}
+                />
+              }
+              label="Filter for Title"
+            />
+            <FormControlLabel
+              control={
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                >
+                  <MenuItem value={"none"}>None</MenuItem>
+                  <MenuItem value={"search"}>Search</MenuItem>
+                  <MenuItem value={"select"}>Select</MenuItem>
+                </Select>
+              }
+              label="Filter for Year"
+            />
           </>
         )}
       </FormGroup>

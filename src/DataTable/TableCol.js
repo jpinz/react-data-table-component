@@ -102,7 +102,7 @@ const TableCol = memo(({ column, sortIcon }) => {
       // change filtering value only if filterColumn (currently selected column) is === the newly clicked column
       // otherwise, retain filter direction if the column is switched
       // if (filterColumn === column.selector) {
-        value = e.target.value;
+      value = e.target.value;
       // }
 
       dispatch({
@@ -139,6 +139,24 @@ const TableCol = memo(({ column, sortIcon }) => {
     </span>
   );
 
+  const renderFilter = (filter) => {
+    if (filter == true || filter == "search") {
+      return <input type="search" onChange={handleFilterChange}></input>;
+    }
+    if (filter == "select") {
+      var val = function (X) {
+        return <option>{X}</option>;
+      };
+      return (
+        <select onChange={handleFilterChange}>
+          <option value="">None</option>
+          {column.values.map(val)}
+        </select>
+      );
+    }
+    return (null);
+  };
+
   const sortActive = column.sortable && sortColumn === column.selector;
   const nativeSortIconLeft = column.sortable && !sortIcon && !column.right;
   const nativeSortIconRight = column.sortable && !sortIcon && column.right;
@@ -170,7 +188,8 @@ const TableCol = memo(({ column, sortIcon }) => {
             {nativeSortIconLeft && renderNativeSortIcon(sortActive)}
           </ColumnSortable>
         )}
-        {column.filter && column.filter(column, handleFilterChange)}
+        {column.filter && typeof column.filter == "function" && column.filter(column, handleFilterChange)}
+        {column.filter && renderFilter(column.filter)}
       </div>
     </TableColStyle>
   );

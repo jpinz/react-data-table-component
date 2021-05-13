@@ -292,7 +292,7 @@ const DataTable = memo(
         return sortedData;
       }
 
-      // use general sorting function when columns has no sort function on it's own
+      // use general filter function when columns has no filter function on it's own
       const column = filterColumn && columnsBySelector[filterColumn];
       if (!column || !column.filterFunction) {
         return filterRows(
