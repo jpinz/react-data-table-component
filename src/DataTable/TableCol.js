@@ -145,7 +145,7 @@ const TableCol = memo(({ column, sortIcon }) => {
     }
     if (filter == "select") {
       var val = function (X) {
-        return <option>{X}</option>;
+        return <option key={X}>{X}</option>;
       };
       return (
         <select onChange={handleFilterChange}>

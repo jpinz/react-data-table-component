@@ -29,6 +29,7 @@ const KitchenSink = () => {
   const [filterableColumns, setFilterColumns] = React.useState(false);
   const [titleFilter, setTitleFilter] = React.useState(false);
   const [dateFilter, setDateFilter] = React.useState("none");
+  const [customDirectorFilter, setCustomDirectorFilter] = React.useState(false);
   const [expandOnRowClick, setExpandOnRowClick] = React.useState(false);
   const [pagination, setPagination] = React.useState(true);
   const [highlight, setHighlight] = React.useState(false);
@@ -46,23 +47,41 @@ const KitchenSink = () => {
   const [direction, setDirection] = React.useState(false);
   const [directionValue, setDirectionValue] = React.useState("auto");
 
+  var customInputStyle = {
+    color: "red",
+    borderColor: "orange"
+ };
+
   var columns = [
     {
       name: "Title",
       selector: "title",
       sortable: true,
-      filter: titleFilter,
+      filter: titleFilter && filterableColumns,
     },
     {
       name: "Director",
       selector: "director",
       sortable: true,
+      filter: (col, filterChange) => {
+        if (customDirectorFilter && filterableColumns) {
+          return (<div>
+            <input
+              type="search"
+              onChange={filterChange}
+              placeholder={col.name}
+              style={customInputStyle}
+            ></input>
+          </div>);
+        }
+        return (null);
+      }
     },
     {
       name: "Year",
       selector: "year",
       sortable: true,
-      filter: dateFilter,
+      filter: filterableColumns && dateFilter,
     },
   ];
 
@@ -338,6 +357,16 @@ const KitchenSink = () => {
                 />
               }
               label="Filter for Title"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={customDirectorFilter}
+                  onChange={() => setCustomDirectorFilter(!customDirectorFilter)}
+                />
+              }
+              label="Custom Filter for Director"
             />
             <FormControlLabel
               control={
